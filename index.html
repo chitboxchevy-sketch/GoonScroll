@@ -62,51 +62,37 @@
     </div>
 
     <script>
-        async function loadVideos() {
-            try {
-                const response = await fetch('videos.json');
-                const videos = await response.json();
-                const videoContainer = document.getElementById('video-container');
-                videos.forEach(url => {
-                    const videoItem = document.createElement('div');
-                    videoItem.className = 'video-item';
-                    const video = document.createElement('video');
-                    video.src = url;
-                    video.controls = true;
-                    videoItem.appendChild(video);
-                    videoContainer.appendChild(videoItem);
-                });
-            } catch (error) {
-                console.error('Error loading videos:', error);
-            }
+        function loadVideos() {
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const videoContainer = document.getElementById('video-container');
+            videos.forEach(url => {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                const video = document.createElement('video');
+                video.src = url;
+                video.controls = true;
+                videoItem.appendChild(video);
+                videoContainer.appendChild(videoItem);
+            });
         }
 
-        async function addVideo() {
+        function addVideo() {
             const url = document.getElementById('video-url').value;
             if (url) {
-                try {
-                    const response = await fetch('videos.json');
-                    let videos = await response.json();
-                    videos.push(url);
-                    await fetch('videos.json', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(videos)
-                    });
-                    const videoContainer = document.getElementById('video-container');
-                    const videoItem = document.createElement('div');
-                    videoItem.className = 'video-item';
-                    const video = document.createElement('video');
-                    video.src = url;
-                    video.controls = true;
-                    videoItem.appendChild(video);
-                    videoContainer.appendChild(videoItem);
-                    document.getElementById('video-url').value = '';
-                } catch (error) {
-                    console.error('Error adding video:', error);
-                }
+                let videos = JSON.parse(localStorage.getItem('videos')) || [];
+                videos.push(url);
+                localStorage.setItem('videos', JSON.stringify(videos));
+
+                const videoContainer = document.getElementById('video-container');
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                const video = document.createElement('video');
+                video.src = url;
+                video.controls = true;
+                videoItem.appendChild(video);
+                videoContainer.appendChild(videoItem);
+
+                document.getElementById('video-url').value = '';
             }
         }
 
